@@ -14,8 +14,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// \c PGLNilObject is a test class which includes a \c -init method which is intentionally mis-annotated.
-/// It returns \c nil instead of an instance of \c PGLNilObject to allow PlaygroundLogger's tests to exercise logging this sort of broken value.
+/// \c PGLNilObject is a test class which includes a \c -init method which is
+/// intentionally mis-annotated. It returns \c nil instead of an instance of \c
+/// PGLNilObject to allow PlaygroundLogger's tests to exercise logging this sort
+/// of broken value.
 ///
 /// See also: \c LogEntryTests.testNonOptionalNilObject()
 @interface PGLNilObject : NSObject

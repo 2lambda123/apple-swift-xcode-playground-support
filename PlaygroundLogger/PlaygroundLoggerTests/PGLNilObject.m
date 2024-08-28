@@ -15,7 +15,7 @@
 @implementation PGLNilObject
 
 - (instancetype)init {
-    return nil;
+  return nil;
 }
 
 @end

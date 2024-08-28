@@ -23,7 +23,7 @@ extension LogEntry {
     init(describing instance: Any, name: String? = nil, policy: LogPolicy) throws {
         self = try .init(describing: instance, name: name ?? emptyNameString, typeName: nil, policy: policy, currentDepth: 0)
     }
-    
+
     fileprivate init(describing instance: Any, name: String, typeName passedInTypeName: String?, policy: LogPolicy, currentDepth: Int) throws {
         guard currentDepth <= policy.maximumDepth else {
             // We're trying to log an instance that is "too deep"; as a result, we need to just return a gap.
@@ -85,13 +85,13 @@ extension LogEntry {
         if let customPlaygroundDisplayConvertible = instance as? CustomPlaygroundDisplayConvertible {
             self = try .init(describing: customPlaygroundDisplayConvertible.playgroundDescription, name: name, typeName: typeName, policy: policy, currentDepth: currentDepth)
         }
-        
+
         // For types which conform to the `CustomOpaqueLoggable` protocol, get their custom representation and construct an opaque log entry. (This is checked *second* so that user implementations of `CustomPlaygroundDisplayConvertible` are honored over this framework's implementations of `CustomOpaqueLoggable`.)
         else if let customOpaqueLoggable = instance as? CustomOpaqueLoggable {
             // TODO: figure out when to set `preferBriefSummary` to true
             self = try .opaque(name: name, typeName: typeName, summary: generateSummary(for: instance, withTypeName: typeName, using: mirror), preferBriefSummary: false, representation: customOpaqueLoggable.opaqueRepresentation())
         }
-        
+
         // For types which conform to the legacy `CustomPlaygroundQuickLookable` or `_DefaultCustomPlaygroundQuickLookable` protocols, get their `PlaygroundQuickLook` and use that for logging.
         else if let customQuickLookable = instance as? CustomPlaygroundQuickLookable {
             self = try .init(playgroundQuickLook: customQuickLookable.customPlaygroundQuickLook, name: name, typeName: typeName, summary: generateSummary(for: instance, withTypeName: typeName, using: mirror))
@@ -99,12 +99,12 @@ extension LogEntry {
         else if let defaultQuickLookable = instance as? _DefaultCustomPlaygroundQuickLookable {
             self = try .init(playgroundQuickLook: defaultQuickLookable._defaultCustomPlaygroundQuickLook, name: name, typeName: typeName, summary: generateSummary(for: instance, withTypeName: typeName, using: mirror))
         }
-            
+
         // If a type implements the `debugQuickLookObject()` Objective-C method, then get their debug quick look object and use that for logging (by passing it back through this initializer).
         else if let debugQuickLookObjectMethod = (instance as AnyObject).debugQuickLookObject, let debugQuickLookObject = debugQuickLookObjectMethod() {
             self = try .init(describing: debugQuickLookObject, name: name, typeName: typeName, policy: policy, currentDepth: currentDepth)
         }
-            
+
         // Otherwise, first check if this is an interesting CF type before logging structure.
         // This works around SR-2289/<rdar://problem/27116100>.
         else {
@@ -129,14 +129,14 @@ extension LogEntry {
             }
         }
     }
-    
+
     private init(playgroundQuickLook: PlaygroundQuickLook, name: String, typeName: String, summary: String) throws {
         // TODO: figure out when to set `preferBriefSummary` to true
         self = try .opaque(name: name, typeName: typeName, summary: summary, preferBriefSummary: false, representation: playgroundQuickLook.opaqueRepresentation())
     }
-    
+
     fileprivate static let superclassLogEntryName = "super"
-    
+
     fileprivate init(structureFrom mirror: Mirror, name: String, typeName: String, summary: String, policy: LogPolicy, currentDepth: Int) {
         self = .structured(name: name,
                            typeName: typeName,
@@ -154,7 +154,7 @@ extension LogEntry.StructuredDisposition {
             self = .container
             return
         }
-        
+
         switch displayStyle {
         case .`struct`:
             self = .`struct`
